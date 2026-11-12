@@ -1,6 +1,6 @@
 # Mini-Brain Toolkit: Acceptance Testing
 
-> V16, 2026-11-11.
+> V17, 2026-11-12.
 
 The acceptance scenarios to run before a release, and how to run them on whatever machine is at hand. It takes its example brains from `MBT_EXAMPLES.md`, seeds fixtures with `tests/MBT_SEED_FIXTURE.py`, grades drift with `tests/MBT_DRIFT_COMPARE.py`, snapshots repositories with `tests/MBT_SNAPSHOT.sh`, and runs the shell-sensitive script scenarios with `tests/MBT_SHELL_CHECKS.sh`. This is a recipe: each scenario states its setup and the outcome it expects, and the running agent works out the steps.
 
@@ -120,10 +120,10 @@ Each scenario states observable outcomes, never a procedure's wording, so an edi
 8. **Example brains.** *Harness: none, or any when headless. Brain: each example. Cost: script, or headless report-only.* Every difference is behind, missing, dropped or an own edit. Known own edits are reported as own edits: lamarr-brain's clone name, mini-subtitle-wizard-brain's fixed clone path and its pull-request rule, and virtual-view-brain's fixed clone path. By script, the other examples only show that the grader runs on them; a headless run is graded against the grader's labels. One mismatch is known: the grader compares a template's staged comment only where the brain holds it word for word, so it is silent on two lamarr-brain paragraphs the brain uncommented and changed, the entrypoint's maintenance-doc boundaries and the hook's active-work-item paragraph, which check reports as own edits. A headless run changes nothing.
 9. **Loading reach.** *Harness: any. Brain: scenario 6's fixture before fixes. Cost: headless report-only.* Check flags that only `CLAUDE.md` reaches the hook. When scenario 6 runs, its first report covers this.
 10. **Skips.** *Harness: any. Brain: see below. Cost: headless report-only.*
-    - With a full clone of the commit under test as the target, check 10 is skipped, and the report names `SKILL.md` and `MBT_CHECK_BRAIN.md` as the reason.
+    - With a full clone of the commit under test as the target, check stops before checking, reports that the target is not a mini-brain, and changes nothing.
     - With a multi-lobe fixture that has a dream cycle, the dream-cycle comparison is skipped, and the template's full dated history is listed.
     - With a brain directory that isn't a git repository, check 9 is reported as unchecked.
-11. **Install guard.** *Harness: any. Brain: a toolkit copy. Cost: headless.* Plant a top-level `NOTES.md`, a markdown file without the lobespace, in both a copy of the toolkit and the writable install. Check the copy and approve every fix. Only the copy changes.
+11. **Install guard.** *Harness: any. Brain: fixture. Cost: headless.* Plant a top-level `NOTES.md`, a markdown file without the lobespace, in both the fixture and the writable install. Check the fixture and approve every fix. Only the fixture changes.
 
 ### Dream cycle
 
