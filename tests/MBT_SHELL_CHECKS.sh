@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run MAT's shell-sensitive script scenarios: 1 (each README install line, in zsh, bash and sh) and 14's find commands.
+# Run MAT's shell-sensitive script scenarios: 1 (each README install line, in zsh, bash and sh, and its upgrade from the newest release) and 14's find commands.
 # Prints a PLATFORM line, then one PASS or FAIL line per case. Writes only inside <workdir>, and changes no git config.
 # usage, on the host:  TK=<toolkit checkout> W=<new empty directory> bash tests/MBT_SHELL_CHECKS.sh
 # usage, on Linux:     docker run --rm -v <toolkit checkout>:/tk:ro -v <this brain>:/mb:ro -v <new empty directory>:/work debian:stable-slim bash -c \
@@ -41,6 +41,21 @@ grep -n 'git clone' "$TK/README.md" | while IFS= read -r row; do
     echo "1  line $n  $sh  $case  rc=$rc  ${ok:-FAIL}"
   done; done
 done || exit 1   # a line that could not be redirected stops the whole run
+
+# Scenario 1, upgrade: an install of the newest release, updated by each line to the commit under test tagged above it, holds exactly the files that commit tracks.
+REL=$(git -C "$W/remote.git" tag --sort=-v:refname | grep -v -- '-mat$' | head -1)
+git -C "$W/remote.git" tag 0.99-mat HEAD
+grep -n 'git clone' "$TK/README.md" | while IFS= read -r row; do
+  n=${row%%:*}; line=${row#*:}; d=$W/upg-$n; rm -rf "$d"
+  git clone -q "$W/remote.git" "$d" && git -C "$d" checkout -q "$REL"
+  l=$(printf '%s' "$line" | sed -E "s#^d=[^;]*;#d=$d;#; s#https://github.com/robfromboulder/mini-brain-toolkit#$W/remote.git#")
+  case $l in "d=$d;"*) ;; *) echo "1  line $n: its install path was not redirected into W; stopping before it touches a real install"; exit 1;; esac
+  bash -c "$l" >/dev/null 2>&1; rc=$?
+  extra=$(cd "$d" && find . -path ./.git -prune -o -type f -print | sed 's#^\./##' | LC_ALL=C sort | comm -23 - <(git -C "$d" ls-files | LC_ALL=C sort))
+  ok=$([ $rc = 0 ] && [ "$(git -C "$d" rev-parse HEAD)" = "$HEADC" ] && [ -z "$extra" ] && echo PASS)
+  echo "1  line $n  bash  upgrade-from-$REL  rc=$rc  ${ok:-FAIL}"
+done || exit 1
+git -C "$W/remote.git" tag -d 0.99-mat >/dev/null
 
 # Scenario 14: work setup's two find commands, on a working/ that holds a prefix collision and a space, and on a missing working/.
 mkdir -p "$W/s14/working" && cd "$W/s14" || exit 1
