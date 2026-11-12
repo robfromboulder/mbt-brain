@@ -1,6 +1,6 @@
 # Mini-Brain Toolkit: Technical Approach
 
-> V23, 2026-11-10.
+> V24, 2026-11-11.
 
 This document describes the approach for addressing the problems defined in `MBT_SCOPE.md`. It covers the strategic approach and key design decisions — not delivery sequence.
 
@@ -28,9 +28,9 @@ The pattern belongs to the curated-store class `MBT_SCOPE.md` assesses, and with
 
 ### 1.2 Dogfood the pattern
 
-The toolkit is itself a mini-brain, and its subject is the mini-brain pattern. Building and maintaining it runs the templates and procedures on a real brain, which is the strongest available test that someone can start a knowledge store without expertise and assess one (*starting needs no expertise and inherits no drift*, *any knowledge store can be assessed*). A toolkit that defined the pattern while not following it would be its own counterexample.
+The toolkit keeps a mini-brain the way any project does: in a repository of its own beside the toolkit's, loaded through the project hook, and maintained by procedures that `create` instantiates and `check` keeps current. Building and maintaining the toolkit runs the templates and procedures on a real brain, which is the strongest available test that someone can start a knowledge store without expertise and assess one (*starting needs no expertise and inherits no drift*, *any knowledge store can be assessed*). A toolkit that defined the pattern while not following it would be its own counterexample.
 
-The one wrinkle dogfooding creates is that two kinds of top-level knowledge file coexist: the toolkit's *own* brain (its problem, design, and findings) and the *pattern it defines* as a consumable product (the reference documents and the two procedures). The read index resolves this by grouping the two in blocks rather than interleaving them.
+The toolkit was first itself a mini-brain, with its own brain and the pattern it defines sharing one repository, while reading its files was the way to use the pattern. Once the toolkit installed as a skill, that arrangement broke the pattern's rule that a brain is not shipped with its product: every install carried the brain, and the brain was the one that didn't use the skill. The brain moved to a repository of its own, and the toolkit became a project with one.
 
 ### 1.3 Distill from live exemplars, do not invent
 

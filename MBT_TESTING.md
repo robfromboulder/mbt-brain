@@ -1,10 +1,10 @@
 # Mini-Brain Toolkit: Acceptance Testing
 
-> V15, 2026-11-10.
+> V16, 2026-11-11.
 
 The acceptance scenarios to run before a release, and how to run them on whatever machine is at hand. It takes its example brains from `MBT_EXAMPLES.md`, seeds fixtures with `tests/MBT_SEED_FIXTURE.py`, grades drift with `tests/MBT_DRIFT_COMPARE.py`, snapshots repositories with `tests/MBT_SNAPSHOT.sh`, and runs the shell-sensitive script scenarios with `tests/MBT_SHELL_CHECKS.sh`. This is a recipe: each scenario states its setup and the outcome it expects, and the running agent works out the steps.
 
-Run it when asked to run the acceptance tests or to test a release. The commit under test is this checkout's `HEAD` unless the runner names another. Coverage is whatever the machine allows. No run's results are kept, and nothing a run produces is committed.
+Run it when asked to run the acceptance tests or to test a release. The commit under test is the `HEAD` of the toolkit checkout beside this repo, `../mini-brain-toolkit`, unless the runner names another. Coverage is whatever the machine allows. No run's results are kept, and nothing a run produces is committed.
 
 ## 1. Probe
 
@@ -31,7 +31,7 @@ Skip each scenario whose needs the machine can't meet, and give the reason. Then
 
 1. every script scenario;
 2. scenario 6, the upgrade from the last release;
-3. the scenarios under each §6 heading whose procedure changed since the newest release tag, by `git diff --stat <tag>..HEAD`: Install for `README.md` or `SKILL.md`; Create for `MBT_CREATE_BRAIN.md` or `templates/`; Check for `MBT_CHECK_BRAIN.md` or `templates/`; Dream cycle for `templates/DREAM_CYCLE.md` or `MBT_DREAM_CYCLE.md`; Work items and sessions for the work-item or session-closeout templates;
+3. the scenarios under each §6 heading whose procedure changed since the newest release tag, by `git diff --stat <tag>..HEAD` in the toolkit checkout: Install for `README.md` or `SKILL.md`; Create for `MBT_CREATE_BRAIN.md` or `templates/`; Check for `MBT_CHECK_BRAIN.md` or `templates/`; Dream cycle for `templates/DREAM_CYCLE.md`; Work items and sessions for the work-item or session-closeout templates;
 4. the rest, by number;
 5. scenario 17 last.
 
@@ -41,7 +41,7 @@ Tell the runner what was picked and what the budget left out, and wait for their
 
 ## 3. Run
 
-- **Test install.** Install the commit under test as a full clone (check 10 reads the toolkit's history), under the skill name `mini-brain-toolkit-mat`: at `~/.claude/skills/mini-brain-toolkit-mat` for Claude Code, and `~/.agents/skills/mini-brain-toolkit-mat` for Codex and OpenCode 2. Set `name: mini-brain-toolkit-mat` in its `SKILL.md`, since each harness finds a skill by that name, and invoke it by that name. Delete its `tests/`: a tested agent that finds the grader runs it in place of the procedure, and the grader then grades itself. The grader runs from this checkout. Stop if either path exists. The runner's own install is never touched, and the test install is removed when the run ends. Each harness keeps its own sign-in and settings, so a tested agent also sees the runner's global instructions.
+- **Test install.** Install the commit under test as a full clone (check 10 reads the toolkit's history), under the skill name `mini-brain-toolkit-mat`: at `~/.claude/skills/mini-brain-toolkit-mat` for Claude Code, and `~/.agents/skills/mini-brain-toolkit-mat` for Codex and OpenCode 2. Set `name: mini-brain-toolkit-mat` in its `SKILL.md`, since each harness finds a skill by that name, and invoke it by that name. The grader runs from this repo, outside every tested agent's reach: a tested agent that finds the grader runs it in place of the procedure, and the grader then grades itself. Stop if either path exists. The runner's own install is never touched, and the test install is removed when the run ends. Each harness keeps its own sign-in and settings, so a tested agent also sees the runner's global instructions.
 - **Scratch copies.** Every brain and project a scenario touches is a copy in the scratch directory. Never run against an example in place.
 - **Isolation.** Keep answers files, scripts and fixture sources outside the tested agent's working directory. A tested agent reads whatever it can reach.
 - **Headless runs.** Start each tested agent fresh, with write access limited to the scratch directory. Give it a temp directory inside the scratch directory, with `TMPDIR` set to it, since check 10 compares copies outside the brain and the install. Run it from the brain, with stdin from `/dev/null`, and keep its transcript in the scratch directory. A report-only run gets the same write access as any other; its snapshots, not its sandbox, show it changed nothing. Each harness:
@@ -50,7 +50,7 @@ Tell the runner what was picked and what the budget left out, and wait for their
   - *OpenCode 2*: `opencode run --format json 'Read <test install>/SKILL.md and run <request>'`, with `OPENCODE_CONFIG_CONTENT='{"permission":{"external_directory":{"<test install>/**":"allow","<temp directory>/**":"allow"}}}'` and the other directories it uses added the same way. It attaches a skill only from its interactive `@` menu, so a headless run uses the README's other-harnesses prompt. Its answer is the last `text` part in the JSON events.
 
   A scenario that needs the owner's answers states them in the prompt or, for a multi-turn intake, resumes the session and answers only from an answers file written before the run. Write each answers file as carefully as the scenario: an answer it doesn't give is "yours to settle", never "not a premise".
-- **Linux.** Run a scenario's Linux half in a `debian:stable-slim` container, as `tests/MBT_SHELL_CHECKS.sh`'s header shows, with the toolkit checkout mounted read-only and an empty scratch directory mounted for its work. The container's `sh` is dash. Agent scenarios run on the host only, because each harness's sign-in lives in the runner's `HOME`.
+- **Linux.** Run a scenario's Linux half in a `debian:stable-slim` container, as `tests/MBT_SHELL_CHECKS.sh`'s header shows, with the toolkit checkout and this repo mounted read-only and an empty scratch directory mounted for its work. The container's `sh` is dash. Agent scenarios run on the host only, because each harness's sign-in lives in the runner's `HOME`.
 - **Batches.** Run headless jobs two or three at a time. Usage limits stop larger batches partway.
 - **Scripts.** Run every command that uses a variable through `bash -c`, and write any loop in bash. Under zsh an unquoted variable isn't word-split, and a line starting with `=` is a command lookup.
 - **Before and after.** Before each scenario that runs an agent, run `tests/MBT_SNAPSHOT.sh` on every directory it can reach and on the test install, naming no directory that holds another one named, and save the output. §5 compares it with a second snapshot after. A harness's permissions don't reliably confine writes to the directories it was given, so after each run, also look for files written since it started in the directory holding the scratch directory and at the top of the system temp directory: `find <that directory> -newer <the first snapshot's file> -type f -not -path '<scratch directory>/*'`, and `find /tmp /private/tmp -mindepth 1 -maxdepth 1 -newer <the first snapshot's file>`, which lists a new directory as well as a new file, since an agent's working copies often land in one. Other sessions write there too, so count a hit only when the agent's transcript shows it wrote that path.
@@ -120,10 +120,10 @@ Each scenario states observable outcomes, never a procedure's wording, so an edi
 8. **Example brains.** *Harness: none, or any when headless. Brain: each example. Cost: script, or headless report-only.* Every difference is behind, missing, dropped or an own edit. Known own edits are reported as own edits: lamarr-brain's clone name, mini-subtitle-wizard-brain's fixed clone path and its pull-request rule, and virtual-view-brain's fixed clone path. By script, the other examples only show that the grader runs on them; a headless run is graded against the grader's labels. One mismatch is known: the grader compares a template's staged comment only where the brain holds it word for word, so it is silent on two lamarr-brain paragraphs the brain uncommented and changed, the entrypoint's maintenance-doc boundaries and the hook's active-work-item paragraph, which check reports as own edits. A headless run changes nothing.
 9. **Loading reach.** *Harness: any. Brain: scenario 6's fixture before fixes. Cost: headless report-only.* Check flags that only `CLAUDE.md` reaches the hook. When scenario 6 runs, its first report covers this.
 10. **Skips.** *Harness: any. Brain: see below. Cost: headless report-only.*
-    - With a full clone of the commit under test as the target, `tests/` included, check 10 is skipped, and the report names `SKILL.md` and `MBT_CHECK_BRAIN.md` as the reason.
+    - With a full clone of the commit under test as the target, check 10 is skipped, and the report names `SKILL.md` and `MBT_CHECK_BRAIN.md` as the reason.
     - With a multi-lobe fixture that has a dream cycle, the dream-cycle comparison is skipped, and the template's full dated history is listed.
     - With a brain directory that isn't a git repository, check 9 is reported as unchecked.
-11. **Install guard.** *Harness: any. Brain: a toolkit copy. Cost: headless.* Plant a missing version header in both a copy of the toolkit and the writable install. Check the copy and approve every fix. Only the copy changes.
+11. **Install guard.** *Harness: any. Brain: a toolkit copy. Cost: headless.* Plant a top-level `NOTES.md`, a markdown file without the lobespace, in both a copy of the toolkit and the writable install. Check the copy and approve every fix. Only the copy changes.
 
 ### Dream cycle
 

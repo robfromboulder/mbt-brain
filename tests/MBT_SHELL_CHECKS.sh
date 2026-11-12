@@ -2,8 +2,8 @@
 # Run MAT's shell-sensitive script scenarios: 1 (each README install line, in zsh, bash and sh) and 14's find commands.
 # Prints a PLATFORM line, then one PASS or FAIL line per case. Writes only inside <workdir>, and changes no git config.
 # usage, on the host:  TK=<toolkit checkout> W=<new empty directory> bash tests/MBT_SHELL_CHECKS.sh
-# usage, on Linux:     docker run --rm -v <toolkit checkout>:/tk:ro -v <new empty directory>:/work debian:stable-slim bash -c \
-#                        'apt-get update -qq && apt-get install -y -qq --no-install-recommends git zsh ca-certificates >/dev/null && TK=/tk W=/work bash /tk/tests/MBT_SHELL_CHECKS.sh'
+# usage, on Linux:     docker run --rm -v <toolkit checkout>:/tk:ro -v <this brain>:/mb:ro -v <new empty directory>:/work debian:stable-slim bash -c \
+#                        'apt-get update -qq && apt-get install -y -qq --no-install-recommends git zsh ca-certificates >/dev/null && TK=/tk W=/work bash /mb/tests/MBT_SHELL_CHECKS.sh'
 : "${TK:?set TK}" "${W:?set W}"
 [ -d "$W" ] && [ -z "$(ls -A "$W")" ] || { echo "W must be an existing empty directory"; exit 1; }
 # git settings for this process only; nothing global is written

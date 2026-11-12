@@ -1,6 +1,6 @@
 # Mini-Brain Toolkit: Session Closeout Instructions
 
-> V8, 2026-11-09.
+> V9, 2026-11-11.
 
 ---
 
@@ -12,11 +12,12 @@ Governs session log entries in both `MBT_LOG.md` and any work item's `working/MB
 
 1. **Explicit direction** — the user names a target log or work item.
 2. **Session content** — the part's work advances an open work item: its `working/MBT_<WORK>_*` docs or the change they track.
-3. **No match** — append to `MBT_LOG.md`.
+3. **Current branch** — the part's changes land on the branch checked out in the checkout or worktree where they were made, and that branch matches the branch declared in an open work item's `MBT_<WORK>_CLAUDE.md` runbook (exact name or glob). A part whose changes don't land on that branch has no branch signal, nor does any part of a session run from this repo; never take one from a sibling checkout's incidental branch.
+4. **No match** — append to `MBT_LOG.md`.
 
-When a part belongs to a single open item but could be any of several, ask rather than guess. A part owned by an item this session folds into the canonical docs goes to `MBT_LOG.md`: the item's working log is merged and moved to `archive/` in that same pass, so a fresh entry there would land in `archive/` unmerged.
+When a part belongs to a single work item but the content and branch signals point at different items, or either signal can't tell which, ask rather than guess. A part owned by an item this session folds into the canonical docs goes to `MBT_LOG.md`: the item's working log is merged and moved to `archive/` in that same pass, so a fresh entry there would land in `archive/` unmerged.
 
-**Several targets.** Write one entry per target log, each covering only the parts routed to it. A discovery or decision that spans several items is stated in full once: in the log the user names, else in `MBT_LOG.md` — the content signal doesn't apply to it. Its consequence for each affected item is a part of its own, routed by the rules above, and states only the consequence. An item that was only mentioned, with nothing routed to it, gets no entry.
+**Several targets.** Write one entry per target log, each covering only the parts routed to it. A discovery or decision that spans several items is stated in full once: in the log the user names, else in `MBT_LOG.md` — the content and branch signals don't apply to it. Its consequence for each affected item is a part of its own, routed by the rules above, and states only the consequence. An item that was only mentioned, with nothing routed to it, gets no entry.
 
 **Reading** (never read these large files in full): `grep -n '^---$' <log-file> | tail -1` gives the last separator's line `L`; read from `offset` `L`.
 
