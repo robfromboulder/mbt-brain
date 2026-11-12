@@ -75,8 +75,8 @@ Manual steps live in `MBT_BRAIN_SPLIT_TESTING.md`.
 4. Import into `mbt-brain` at a named commit; write its entrypoint; merge its README; make the minor edits.
 5. Open the product PR.
 6. Run `check` on `mbt-brain` from an install of the PR branch; apply what it recommends.
-7. Run the acceptance tests from the brain against the PR branch; merge; tag.
-8. Rebuild the dream cycle in `mbt-brain` (decision 8); it needs no product change, so it can follow the merge.
+7. Rebuild the dream cycle in `mbt-brain` (decision 8). It needs no product change, but acceptance scenario 13 dry-runs it and expects nothing that would stop a run, so it lands before the acceptance tests.
+8. Run the acceptance tests from the brain against the PR branch; merge; tag.
 9. Update a real 0.73 install with the unchanged README line.
 
 ## Scope boundary — what this does NOT include
