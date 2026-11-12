@@ -1,19 +1,19 @@
 # Mini-Brain Toolkit: Session Closeout Instructions
 
-> V9, 2026-11-11.
+> V10, 2026-11-12.
 
 ---
 
 Governs session log entries in both `MBT_LOG.md` and any work item's `working/MBT_<WORK>_LOG.md`, where `<WORK>` is that item's slug — the entry format and content rules are the same regardless of destination. **This format is the authority; do not imitate the previous entry** — a fresh file has none, and copying a neighbor lets the structure drift one merge at a time. Match sibling entries only where this spec is silent.
 
-**Purpose.** The log is the work's lineage, traceable to each coding session, and the home for what **cannot be deduced from the files alone**: key discoveries, decision points (and who made each call), what was tried and didn't work, and the course-corrections that kept the work on track. It's a log, not a design doc — don't restate scope or strategy; give the turn-by-turn account of each session start to finish and what was learned.
+**Purpose.** The log is the work's lineage, traceable to each coding session, and the home for what **cannot be deduced from the codebase alone**: key discoveries, decision points (and who made each call), what was tried and didn't work, and the course-corrections that kept the work on track. It's a log, not a design doc — don't restate scope or strategy; give the turn-by-turn account of each session start to finish and what was learned.
 
 **Routing — which log files to append to.** Route each part of the session — its work, discoveries, and decisions on one subject — separately. A part that belongs to an open work item — its `MBT_<WORK>_*` docs still in `working/`, even if the change they track has already landed — goes to that item's `working/MBT_<WORK>_LOG.md` (create it if the item lacks one); a part that belongs to no single item goes to `MBT_LOG.md`. Resolve each part's ownership by the first matching signal, in priority order:
 
 1. **Explicit direction** — the user names a target log or work item.
-2. **Session content** — the part's work advances an open work item: its `working/MBT_<WORK>_*` docs or the change they track.
+2. **Session content** — the part's work belongs to an open work item: its PR, branch, code area, or `working/MBT_<WORK>_*` docs (e.g. addressing review feedback on the item's PR from a different branch, or refining the item's plan in a session run from this repo).
 3. **Current branch** — the part's changes land on the branch checked out in the checkout or worktree where they were made, and that branch matches the branch declared in an open work item's `MBT_<WORK>_CLAUDE.md` runbook (exact name or glob). A part whose changes don't land on that branch has no branch signal, nor does any part of a session run from this repo; never take one from a sibling checkout's incidental branch.
-4. **No match** — append to `MBT_LOG.md`.
+4. **No match** — append to the canonical log of the nearest common ancestor of the lobes the part's work concerned — not every lobe the session read: a part whose work stayed inside one lobe logs there, and one whose work crossed lobes logs to the lobe above them, however far apart in the tree they sit. In a brain with one lobe, that is always `MBT_LOG.md`.
 
 When a part belongs to a single work item but the content and branch signals point at different items, or either signal can't tell which, ask rather than guess. A part owned by an item this session folds into the canonical docs goes to `MBT_LOG.md`: the item's working log is merged and moved to `archive/` in that same pass, so a fresh entry there would land in `archive/` unmerged.
 
@@ -27,6 +27,6 @@ When a part belongs to a single work item but the content and branch signals poi
 3. Entry shape: an H1 with a short title and date (`# <title> (YYYY-MM-DD)`); a `` **Session ID**: `<session-id>` `` line; a one-paragraph lead (what the session set out to do and what landed); then `##` subsections for the turn-by-turn lineage, decisions, what didn't work, and lessons — chosen per session, not a fixed template.
 4. Session ID = the current session's ID, which the harness sets in its shell environment: `$CLAUDE_CODE_SESSION_ID` in Claude Code, `$CODEX_THREAD_ID` in Codex, `$OPENCODE_SESSION_ID` in OpenCode. Read only the variable of the harness running this session, since a harness started from another's session inherits that one's variable. Ask if it isn't set.
 
-**Content rules:** trace the lineage turn-by-turn (don't summarize the destination); filenames and section names are fine but no line numbers, no cross-document section or finding numbers (`§N`, "finding #N"), and no other drift-prone specifics — reference decisions and findings by their substance, which stays readable as the docs are renumbered and re-homed; skip anything re-derivable from the files themselves; don't restate scope or approach.
+**Content rules:** trace the lineage turn-by-turn (don't summarize the destination); filenames and section names are fine but no line numbers, no cross-document section or finding numbers (`§N`, "finding #N"), and no other drift-prone specifics — reference decisions and findings by their substance, which stays readable as the docs are renumbered and re-homed; skip anything re-derivable from the codebase; don't restate scope or approach.
 
 **Name the people.** The entry must make clear whose session it was: the lead names the human author (with the coding agent as co-author), and decisions stay attributed to whoever made each call. Don't lean on the Session ID to carry this — it's an opaque identifier.
