@@ -101,6 +101,7 @@ Settled by Rob on 2026-11-11. Consequences Claude drew from them are marked *(Cl
 8. **The dream cycle is rebuilt from the template.** It starts from `templates/DREAM_CYCLE.md`, which brings the Toolkit release check and the Scope accuracy phase that apply once the brain consumes the product, and keeps the toolkit's research phases 3a and 3b. A problem it finds in a product file goes on the needs-human-decision list rather than being fixed, because the product repo takes changes only by PR.
 9. **Session closeout takes back the current-branch signal.** After the split, sessions run on the toolkit's feature branches, which the template's signal matches to work items.
 10. **The reference rules for product files move to the toolkit's `CLAUDE.md`.** Orthogonal content, the declared reference exemptions (`MBT_LOBES.md` may cite `MBT_PATTERN.md`) and the maintenance-doc boundaries keep governing the four `MBT_` product files and `SKILL.md`, narrowed to them.
+11. **The rebuilt dream cycle keeps the product checks, flag-only.** The template's Scope accuracy phase never inspects the project's own code, so a Product consistency phase follows it: the toolkit's teaching-artifact consistency check and its self-check of this brain, run against the product at `main`. Every product problem goes on the needs-human-decision list. Settled by Rob on 2026-11-12.
 
 ## Open issues
 
