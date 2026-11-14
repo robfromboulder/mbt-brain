@@ -128,3 +128,20 @@ All Rob's, on Claude's recommendation, before the run:
 - Scenario 3's agent never raised the kilns as a premise; it surfaced only through the catch-all constraints question.
 - The scenario 12 head run proposed two instruction changes: separate required filename references from naming-exemption examples, and separate installed-release checks from upstream-main checks.
 - Scenario 2's `@`-menu selection in OpenCode 2 is still Rob's manual step.
+
+---
+
+# Fix the testing doc's two gaps from the Codex run (2026-11-13)
+
+**Session ID**: `479b3910-a2f2-49fe-9c5a-77f8d0ad0c69`
+
+Later in the same session, Rob asked Claude to fix the two testing-doc gaps the earlier Codex, OpenCode 2 and Linux run had left open. Both landed in `MBT_TESTING.md` on `main`.
+
+## Changes
+
+- The Codex headless command now sets `TMPPREFIX` to the run's temp directory beside `TMPDIR`. zsh writes here-document files under `TMPPREFIX` whatever `TMPDIR` says, and the run's `/tmp` block had stopped a dream cycle at its first heredoc.
+- Scenario 12 now expects the leakage check to replace the `working/` citation with the cited file's substance, as the dream cycle's procedure says while that file exists, instead of flagging it.
+
+## Open
+
+- Neither change was rerun on its own. The scenario 12 reruns that passed had already used the `TMPPREFIX` setting and replaced the citation.
