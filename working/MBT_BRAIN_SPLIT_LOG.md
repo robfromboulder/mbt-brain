@@ -82,3 +82,49 @@ Run overnight in Claude Code 2.1.322 only, with the Linux half in Docker; Codex 
 - Naming `$TMPDIR` in check's temporary-directory step.
 - The example list's virtual-view-brain clone-path entry disagrees with both the agent and the grader.
 - `/private/tmp/drift.buoL` matched no surviving transcript and was left in place.
+
+---
+
+# Run the split's acceptance tests in Codex, OpenCode 2 and Linux (2026-11-13)
+
+**Session ID**: `479b3910-a2f2-49fe-9c5a-77f8d0ad0c69`
+
+Rob, with Claude as co-author and coordinator, asked for the second half of the split's acceptance run: Codex and OpenCode 2, both now installed, plus Linux through OrbStack. Claude settled the open questions with Rob up front, then ran three tracks unattended against PR #32's head, `0ca64ac`. Every scenario run passes, scenario 6 included, so the Codex and OpenCode 2 gate before tagging is met; no toolkit defect turned up, and PR #32 gained no commits.
+
+## Decisions
+
+All Rob's, on Claude's recommendation, before the run:
+
+- **Linux covers agents too.** Besides the shell checks, Codex and OpenCode 2 ran scenarios 2 and 16 in a Debian container, against the testing doc's host-only rule.
+- **Scenarios:** 2, 5 and 16 in each harness, 12 in Codex, one run of 6 in Codex, and 3 in OpenCode to build the brain scenario 5 needs.
+- **Medium reasoning effort, by flag,** since Codex's config sets low; the config stayed untouched. Both harnesses ran gpt-6.1-sol through LiteLLM.
+- **Writes allowed unattended:** this log and the burndown, pushed to `main`, and fix commits to PR #32 only for a clear toolkit defect.
+
+## The run
+
+- Three forked Claude tracks ran at once: Codex on the host, OpenCode 2 on the host (plus scenario 5 in Codex), and Linux. Each ran its tested agents one at a time.
+- Linux: the shell checks passed 67 of 67 on macOS and in Debian. In the container, Codex's sandbox can't create a namespace, so its runs bypassed the sandbox with the container as the boundary. OpenCode 2 isn't on npm, so it came as an unverified binary from its site. It also ignored the mounted `auth.json`, so the key reached it as an environment reference in its config.
+- Scenario 16 passed in all four harness-and-platform pairs, each entry carrying its harness's own session variable rather than the inherited one.
+- Scenario 6 in Codex: the first report listed only the hook paragraph that is one behind and the planted own edit. The walk-through brought every other file current, and the report-only recheck changed nothing.
+- Scenario 3 asked the premises in a round of their own, so the blind-create failure from the previous run did not recur.
+
+## What didn't work
+
+- The first scenario 12 run at the release tag stopped at its first heredoc. zsh writes here-document temp files under `TMPPREFIX`, which defaults to `/tmp/zsh`, and ignores `TMPDIR`. The testing doc's Codex setting blocks `/tmp`, and the dream cycle's no-retry rule then ended the cycle, as it should. Setting `TMPPREFIX` into the run's temp directory fixed the reruns. Scenario 16's agent hit the same block but worked around it.
+- The first scenario 12 run at the commit under test hung for over two hours after a completed file search, and its track sat waiting on it. Claude noticed when Rob asked how the tracks were doing, had it killed, and reran both halves under a watchdog. The cause is unknown.
+- Forked tracks couldn't write their report files, so the coordinator saved them.
+
+## Lessons
+
+- An unattended run needs a stall watchdog on every tested agent from the start, not after a hang.
+- Codex's sandbox without network makes check and the dream cycle report external facts as unverified. Both said so rather than guessing.
+
+## Open
+
+- The testing doc's Codex command should set `TMPPREFIX` beside `TMPDIR`.
+- Scenario 12 says the leakage check flags the `working/` citation, but the dream cycle replaces it with the cited content while the file still exists. The scenario should say that.
+- Whether OpenCode's medium variant took effect through LiteLLM is unconfirmed.
+- Create wrote two log entries with one session ID, after the seed and after stage 2, and doesn't say which is right.
+- Scenario 3's agent never raised the kilns as a premise; it surfaced only through the catch-all constraints question.
+- The scenario 12 head run proposed two instruction changes: separate required filename references from naming-exemption examples, and separate installed-release checks from upstream-main checks.
+- Scenario 2's `@`-menu selection in OpenCode 2 is still Rob's manual step.
